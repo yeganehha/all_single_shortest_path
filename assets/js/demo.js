@@ -9,43 +9,63 @@ var edge = {};
 var indexOfNodes = 0 ;
 
 
+function process() {
+    if ( $('#single_source').is(':checked') ) {
+        if ( nodeStartId == null ){
+            alert('Please select Start Nodes!');
+            return false;
+        }
+        var dijkstra = new dijkstra_single_source_shortest_path(nodes,edge,nodes[nodeStartId]);
+        dijkstra.run();
+
+        var sortedNode = dijkstra.getStepByStep();
+        var stringHint = "<table class=\"table table-nodes\">\n" +
+            "                <thead>\n" +
+            "                <tr>\n" +
+            "                    <td>selected Node</td>\n" +
+            "                    <td>\n" +
+            "                        nodes\n" +
+            "                    </td>\n" +
+            "                </tr>\n" +
+            "                </thead>" ;
+        for (var i = 0 ; i < sortedNode.length ; i++ ){
+            stringHint += '<tr><td>'+sortedNode[i].selectedNode.name+'</td><td>';
+            for ( var i2 = 0 ; i2 < sortedNode[i].nodes.length ; i2++ ){
+               stringHint += sortedNode[i].nodes[i2].name + ": " + ( (sortedNode[i].nodes[i2].degree == Number.MAX_SAFE_INTEGER) ? '∞' : sortedNode[i].nodes[i2].degree )  + "; " ;
+            }
+            stringHint += '</td></tr>';
+        }
+        $("#hint").html(stringHint);
+    }
+}
 function getResult() {
     if ( nodeStartId == null || nodeGoalId == null ){
-        alert('Please select Start and Goal Nodes!');
+        alert('Please select Start and final Nodes!');
         return;
     }
-    let aStar = new astar();
-    aStar.init(nodes,edge,nodes[nodeStartId],nodes[nodeGoalId]);
-    var resultNodes = aStar.getResult();
-    var resultHint = aStar.getQueuePerEachRow();
-    if (resultNodes === "no way !!"){
-        alert('Can Not find path between Start and Goal Node!');
-        return;
-    }
-    var lastNodeName = null ;
-    for ( var i = 0 ; i < resultNodes.length ; i++ ){
-        var id =  resultNodes[i].id ;
-        nodes[id].color = goColor;
-        if ( lastNodeName !== null ){
-            edge[lastNodeName][ nodes[id].name ].color = goColor ;
-        }
-        lastNodeName = nodes[id].name ;
-    }
-    nodes[nodeGoalId].color = goalColor;
-    reDrawCanvas(false);
+    if ( $('#single_source').is(':checked') ) {
+        var dijkstra = new dijkstra_single_source_shortest_path(nodes,edge,nodes[nodeStartId]);
+        dijkstra.run();
 
-    var stringHint = "" ;
-    for ( i = 0 ; i < resultHint.length ; i++ ){
-        stringHint += '<p style="margin-top: 10px;"><strong>level '+i+' queue :</strong> { ';
-        for ( var i2 = 0 ; i2 < resultHint[i].length ; i2++ ){
-            if ( i2 === 0 )
-                stringHint += ' [ '+ resultHint[i][i2].nodes +' , <strong style="cursor: pointer;" title="f() = g() + h() = '+resultHint[i][i2].g +' + '+ resultHint[i][i2].h +' = '+resultHint[i][i2].f +' ">' +  resultHint[i][i2].f + '</strong> ] ';
-            else
-                stringHint += ' , [ '+ resultHint[i][i2].nodes +' , <strong style="cursor: pointer;" title="f() = g() + h() = '+resultHint[i][i2].g +' + '+ resultHint[i][i2].h +' = '+resultHint[i][i2].f +' ">' +  resultHint[i][i2].f + '</strong> ] ';
+        var resultNodes = dijkstra.getSourceToFinal(nodes[nodeGoalId]);
+        if (resultNodes === "no way !!"){
+            alert('Can Not find path between Start and final Node!');
+            return;
         }
-        stringHint += ' } </p><hr>';
+        var lastNodeName = null ;
+        for ( var i = 0 ; i < resultNodes.length ; i++ ){
+            var id =  resultNodes[i].id ;
+            nodes[id].color = goColor;
+            if ( lastNodeName !== null ){
+                edge[lastNodeName][ nodes[id].name ].color = goColor ;
+            }
+            lastNodeName = nodes[id].name ;
+        }
+        nodes[nodeGoalId].color = goalColor;
+        reDrawCanvas(false);
+
     }
-    $("#hint").html(stringHint);
+
 }
 
 function saveData() {
@@ -123,6 +143,29 @@ function startAddEdge(node) {
 }
 function resetCanvas(){
     location.reload();
+}
+function resetConfig() {
+    if ( $('#single_source').is(':checked') ) {
+        for (var index in edge) {
+            // skip loop if the property is from prototype
+            for (var index2 in edge[index]) {
+                // skip loop if the property is from prototype
+                if (!edge[index].hasOwnProperty(index2)) continue;
+                edge[index][index2].color = "#fff5f5" ;
+            }
+
+        }
+        for (var indexNodes in nodes) {
+            // skip loop if the property is from prototype
+            if (!nodes.hasOwnProperty(indexNodes)) continue;
+            nodes[indexNodes].color = "#fff5f5" ;
+        }
+        nodes[nodeStartId].color = goColor;
+        nodeGoalId = null ;
+        $("#selectGoalDiv").html('<input type="radio" name="canvasType" id="selectGoal" value="selectGoal" >Select Final');
+        $("#selectGoal").prop("checked", true);
+        reDrawCanvas(false);
+    }
 }
 function selectStart(nodeSelectedId){
     nodes[nodeSelectedId].color = goColor;
