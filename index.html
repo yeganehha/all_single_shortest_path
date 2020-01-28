@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="noindex" name="robots">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+    <!--------------------- Developer -------------------->
+    <!------------------- Erfan Ebrahimi ----------------->
+    <!--------------- http://ErfanEbrahimi.ir ------------>
+    <!----------------- 0936 - 109 0 413 ----------------->
+
+    <meta name='author' content='Erfan Ebrahimi, http://ErfanEbrahimi.ir'>
+    <meta name="description" content="A* search algorithm with javascript. Erfan Ebarhimi">
+    <link href="./assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="./assets/css/style.css" rel="stylesheet">
+    <script src="./assets/js/jquery-1.11.1.min.js"></script>
+    <script src="./assets/js/bootstrap.min.js"></script>
+    <title>A Star Algorithm</title>
+</head>
+<body>
+<a class="fork-me" title="Fork Me On GitHub" href="https://github.com/yeganehha/AStarAlgorithm"></a>
+<div class="container">
+    <div class="header">
+        Draw the desired graph in the following environment.
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div id="canvasDiv"></div>
+            <div class="row canvasType">
+                <label><input type="radio" name="canvasType" id="addNode" value="node" checked >Insert Node</label>
+                <label><input type="radio" name="canvasType" id="addEdge" value="edge" >Insert Edge</label>
+                <label id="selectStartDiv"><input type="radio" name="canvasType" id="selectStart" value="selectStart" >Select Start</label>
+                <label id="selectGoalDiv"><input type="radio" name="canvasType" id="selectGoal" value="selectGoal" >Select Final</label>
+                <label id="single_sourceDiv"><input type="radio" name="sourceType" id="single_source" value="single_source" checked >single source</label>
+                <label id="all_sourceDiv"><input type="radio" name="sourceType" id="all_source" value="all_source" >all source</label>
+                <span class="button" onclick="resetConfig();">reset</span>
+                <span class="button" onclick="process();">process graph</span>
+                <span class="button" onclick="getResult();">find path</span>
+                <span class="button" onclick="saveData();">save</span>
+                <span class="button" onclick="loadData(0);">load</span>
+                <span class="button" onclick="resetCanvas();">reDraw</span>
+            </div>
+        </div>
+        <div class="col-md-12 color-white" id="hint">
+
+        </div>
+        <div class="col-md-12 color-white">
+            <article class="markdown-body entry-content p-5" itemprop="text"><h1>A Star Algorithm</h1>
+                <p>A* (pronounced "A star") is a computer algorithm that is widely used in pathfinding and graph traversal, which is the process of finding a path between multiple points, called "nodes". It enjoys widespread use due to its performance and accuracy. <a href="https://en.wikipedia.org/wiki/A*_search_algorithm" rel="nofollow">( Read More ... )</a></p>
+                <h2>Getting Started</h2>
+                <p>We tried to implement this routing algorithm through javascript in this project.</p>
+                <p>In this project we try to implement routing in any desired directional graph, and along with finding the path, we will show how to select the path for the training of the algorithm.</p>
+                <h2>Example</h2>
+                <p class="canvasType" style="margin: 35px!important;">
+                    <span class="button" style="height: 80px;" onclick="loadData(1);">Example 1</span>
+                    <span class="button" style="height: 80px;" onclick="loadData(2);">Example 2</span>
+                    <span class="button" style="height: 80px;" onclick="loadData(3);">Example 3</span>
+                    <span class="button" style="height: 80px;" onclick="loadData(4);">Example 4</span>
+                    <span class="button" style="height: 80px;" onclick="loadData(5);">Example 5</span>
+                </p>
+            </article>
+        </div>
+    </div>
+</div>
+</body>
+<script src="./assets/js/dijkstra_single_source_shortest_path.js"></script>
+<script src="./assets/js/demo.js?sri"></script>
+</html>
