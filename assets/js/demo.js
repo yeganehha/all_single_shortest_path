@@ -31,9 +31,37 @@ function process() {
         for (var i = 0 ; i < sortedNode.length ; i++ ){
             stringHint += '<tr><td>'+sortedNode[i].selectedNode.name+'</td><td>';
             for ( var i2 = 0 ; i2 < sortedNode[i].nodes.length ; i2++ ){
-               stringHint += sortedNode[i].nodes[i2].name + ": " + ( (sortedNode[i].nodes[i2].degree == Number.MAX_SAFE_INTEGER) ? '∞' : sortedNode[i].nodes[i2].degree )  + "; " ;
+               stringHint += sortedNode[i].nodes[i2].name + ": " + ( (sortedNode[i].nodes[i2].degree === Number.MAX_SAFE_INTEGER) ? '∞' : sortedNode[i].nodes[i2].degree )  + "; " ;
             }
             stringHint += '</td></tr>';
+        }
+        $("#hint").html(stringHint);
+    } else {
+        var allSourceShortestPath = new all_source_shortest_path(nodes,edge);
+        allSourceShortestPath.run();
+
+        var Marixs = allSourceShortestPath.getStepByStep();
+        var stringHint = "" ;
+        for (var matrixIndex = 0 ; matrixIndex < Marixs.length ; matrixIndex++ ){
+            stringHint += '<p style="margin-top: 10px;"><strong>matrix A'+matrixIndex+'  :</strong><br>';
+            stringHint += "<table class=\"table table-bordered table-nodes\" style='width: auto;margin-bottom: 50px;margin-top: 0px;'>\n" +
+                "                <thead>\n" +
+                "                <tr>\n" +
+                "                    <td></td>\n" ;
+            for ( var indexNodes = 0 ; indexNodes < nodes.length ; indexNodes++ ) {
+                stringHint += "<td>"+nodes[indexNodes].name+"</td>\n";
+            }
+            stringHint += "                </tr>\n" +
+                "                </thead>" ;
+            var thisMatrix = Marixs[matrixIndex];
+            for (var index = 0; index < thisMatrix.length; index++) {
+                stringHint += "                <tr>\n" +"                <td>\n"+nodes[index].name+"                </td>\n";
+                for (var index2 = 0; index2 < thisMatrix[index].length; index2++) {
+                    stringHint += "                <td>\n"+( ( thisMatrix[index][index2].cost === Number.MAX_SAFE_INTEGER) ? '∞' : thisMatrix[index][index2].cost) +"                </td>\n";
+                }
+                stringHint += "                </tr>\n"
+            }
+            stringHint += '</table></p>';
         }
         $("#hint").html(stringHint);
     }
@@ -64,6 +92,30 @@ function getResult() {
         nodes[nodeGoalId].color = goalColor;
         reDrawCanvas(false);
 
+    } else {
+        var allSourceShortestPath = new all_source_shortest_path(nodes,edge);
+        allSourceShortestPath.run();
+
+        var resultNodes = allSourceShortestPath.getSourceToFinal(nodes[nodeStartId],nodes[nodeGoalId]);
+        if (resultNodes === "no way !!"){
+            alert('Can Not find path between Start and final Node!');
+            return;
+        }
+        for ( var i = 0 ; i < resultNodes.nodes.length ; i++ ){
+            var id =  resultNodes.nodes[i].id ;
+            nodes[id].color = goColor;
+        }
+        for ( var i2 = 0 ; i2 < resultNodes.edges.length ; i2++ ){
+            if (  ! ( typeof resultNodes.edges[i2] == "undefined" ) ) {
+                if (!(typeof resultNodes.edges[i2].startNode == "undefined")) {
+                    var idStart = resultNodes.edges[i2].startNode.id;
+                    var idEnd = resultNodes.edges[i2].endNode.id;
+                    edge[nodes[idStart].name][nodes[idEnd].name].color = goColor;
+                }
+            }
+        }
+        nodes[nodeGoalId].color = goalColor;
+        reDrawCanvas(false);
     }
 
 }
@@ -164,6 +216,27 @@ function resetConfig() {
         nodeGoalId = null ;
         $("#selectGoalDiv").html('<input type="radio" name="canvasType" id="selectGoal" value="selectGoal" >Select Final');
         $("#selectGoal").prop("checked", true);
+        reDrawCanvas(false);
+    } else {
+        for (var index in edge) {
+            // skip loop if the property is from prototype
+            for (var index2 in edge[index]) {
+                // skip loop if the property is from prototype
+                if (!edge[index].hasOwnProperty(index2)) continue;
+                edge[index][index2].color = "#fff5f5" ;
+            }
+
+        }
+        for (var indexNodes in nodes) {
+            // skip loop if the property is from prototype
+            if (!nodes.hasOwnProperty(indexNodes)) continue;
+            nodes[indexNodes].color = "#fff5f5" ;
+        }
+        nodeStartId = null ;
+        nodeGoalId = null ;
+        $("#selectStartDiv").html('<input type="radio" name="canvasType" id="selectStart" value="selectStart" >Select Start');
+        $("#selectGoalDiv").html('<input type="radio" name="canvasType" id="selectGoal" value="selectGoal" >Select Final');
+        $("#selectStart").prop("checked", true);
         reDrawCanvas(false);
     }
 }
@@ -274,7 +347,7 @@ function bake_cookie(value) {
 function read_cookie(exampleId) {
     if ( exampleId === 1 ){
         var text =
-            '{"nodes":[{"x":21.714283776661706,"y":118.47272768887606,"name":"A","heuristic":"4","color":"#0fbeff","id":0},{"x":65.52380758618551,"y":66.65454587069424,"name":"B","heuristic":"2","color":"#fff5f5","id":1},{"x":127.1111091734871,"y":29.836364052512426,"name":"C","heuristic":"6","color":"#fff5f5","id":2},{"x":121.39682345920139,"y":98.56363677978514,"name":"D","heuristic":"2","color":"#fff5f5","id":3},{"x":203.30158536396328,"y":70.74545496160333,"name":"E","heuristic":"3","color":"#fff5f5","id":4},{"x":236.95237901475693,"y":132.38181859796697,"name":"F","heuristic":"1","color":"#00ff74","id":5}],"nodeStartId":0,"nodeGoalId":5,"edge":{"A":{"B":{"startNode":{"x":21.714283776661706,"y":118.47272768887606,"name":"A","heuristic":"4","color":"#0fbeff","id":0},"endNode":{"x":65.52380758618551,"y":66.65454587069424,"name":"B","heuristic":"2","color":"#fff5f5","id":1},"cost":"1","color":"#fff5f5"},"F":{"startNode":{"x":21.714283776661706,"y":118.47272768887606,"name":"A","heuristic":"4","color":"#0fbeff","id":0},"endNode":{"x":236.95237901475693,"y":132.38181859796697,"name":"F","heuristic":"1","color":"#00ff74","id":5},"cost":"12","color":"#fff5f5"}},"B":{"C":{"startNode":{"x":65.52380758618551,"y":66.65454587069424,"name":"B","heuristic":"2","color":"#fff5f5","id":1},"endNode":{"x":127.1111091734871,"y":29.836364052512426,"name":"C","heuristic":"6","color":"#fff5f5","id":2},"cost":"3","color":"#fff5f5"},"D":{"startNode":{"x":65.52380758618551,"y":66.65454587069424,"name":"B","heuristic":"2","color":"#fff5f5","id":1},"endNode":{"x":121.39682345920139,"y":98.56363677978514,"name":"D","heuristic":"2","color":"#fff5f5","id":3},"cost":"1","color":"#fff5f5"}},"C":{"E":{"startNode":{"x":127.1111091734871,"y":29.836364052512426,"name":"C","heuristic":"6","color":"#fff5f5","id":2},"endNode":{"x":203.30158536396328,"y":70.74545496160333,"name":"E","heuristic":"3","color":"#fff5f5","id":4},"cost":"3","color":"#fff5f5"}},"E":{"F":{"startNode":{"x":203.30158536396328,"y":70.74545496160333,"name":"E","heuristic":"3","color":"#fff5f5","id":4},"endNode":{"x":236.95237901475693,"y":132.38181859796697,"name":"F","heuristic":"1","color":"#00ff74","id":5},"cost":"3","color":"#fff5f5"}},"D":{"E":{"startNode":{"x":121.39682345920139,"y":98.56363677978514,"name":"D","heuristic":"2","color":"#fff5f5","id":3},"endNode":{"x":203.30158536396328,"y":70.74545496160333,"name":"E","heuristic":"3","color":"#fff5f5","id":4},"cost":"2","color":"#fff5f5"},"F":{"startNode":{"x":121.39682345920139,"y":98.56363677978514,"name":"D","heuristic":"2","color":"#fff5f5","id":3},"endNode":{"x":236.95237901475693,"y":132.38181859796697,"name":"F","heuristic":"1","color":"#00ff74","id":5},"cost":"2","color":"#fff5f5"}}},"indexOfNodes":6}'
+'{"nodes":[{"x":74.31578786749589,"y":45.927273143421516,"name":"A","color":"#fff5f5","id":0},{"x":181.42105102539062,"y":45.927273143421516,"name":"B","color":"#fff5f5","id":1},{"x":184.5789457622327,"y":114.38181859796697,"name":"C","color":"#fff5f5","id":2},{"x":79.84210365696957,"y":111.38181859796697,"name":"D","color":"#fff5f5","id":3}],"nodeStartId":null,"nodeGoalId":null,"edge":{"A":{"B":{"startNode":{"x":74.31578786749589,"y":45.927273143421516,"name":"A","color":"#fff5f5","id":0},"endNode":{"x":181.42105102539062,"y":45.927273143421516,"name":"B","color":"#fff5f5","id":1},"cost":"3","color":"#fff5f5"},"D":{"startNode":{"x":74.31578786749589,"y":45.927273143421516,"name":"A","color":"#fff5f5","id":0},"endNode":{"x":79.84210365696957,"y":111.38181859796697,"name":"D","color":"#fff5f5","id":3},"cost":"7","color":"#fff5f5"}},"B":{"A":{"startNode":{"x":181.42105102539062,"y":45.927273143421516,"name":"B","color":"#fff5f5","id":1},"endNode":{"x":74.31578786749589,"y":45.927273143421516,"name":"A","color":"#fff5f5","id":0},"cost":"8","color":"#fff5f5"},"C":{"startNode":{"x":181.42105102539062,"y":45.927273143421516,"name":"B","color":"#fff5f5","id":1},"endNode":{"x":184.5789457622327,"y":114.38181859796697,"name":"C","color":"#fff5f5","id":2},"cost":"2","color":"#fff5f5"}},"C":{"A":{"startNode":{"x":184.5789457622327,"y":114.38181859796697,"name":"C","color":"#fff5f5","id":2},"endNode":{"x":74.31578786749589,"y":45.927273143421516,"name":"A","color":"#fff5f5","id":0},"cost":"5","color":"#fff5f5"},"D":{"startNode":{"x":184.5789457622327,"y":114.38181859796697,"name":"C","color":"#fff5f5","id":2},"endNode":{"x":79.84210365696957,"y":111.38181859796697,"name":"D","color":"#fff5f5","id":3},"cost":"1","color":"#fff5f5"}},"D":{"A":{"startNode":{"x":79.84210365696957,"y":111.38181859796697,"name":"D","color":"#fff5f5","id":3},"endNode":{"x":74.31578786749589,"y":45.927273143421516,"name":"A","color":"#fff5f5","id":0},"cost":"2","color":"#fff5f5"}}},"indexOfNodes":4}'
         ;
         return JSON.parse(text);
     }else if ( exampleId === 2 ){
