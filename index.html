@@ -18,10 +18,9 @@
     <link href="./assets/css/style.css" rel="stylesheet">
     <script src="./assets/js/jquery-1.11.1.min.js"></script>
     <script src="./assets/js/bootstrap.min.js"></script>
-    <title>A Star Algorithm</title>
+    <title>all - single source shortest path Algorithm</title>
 </head>
 <body>
-<a class="fork-me" title="Fork Me On GitHub" href="https://github.com/yeganehha/AStarAlgorithm"></a>
 <div class="container">
     <div class="header">
         Draw the desired graph in the following environment.
@@ -39,8 +38,8 @@
                 <span class="button" onclick="resetConfig();">reset</span>
                 <span class="button" onclick="process();">process graph</span>
                 <span class="button" onclick="getResult();">find path</span>
-                <span class="button" onclick="saveData();">save</span>
-                <span class="button" onclick="loadData(0);">load</span>
+                <!--<span class="button" onclick="saveData();">save</span>-->
+                <!--<span class="button" onclick="loadData(0);">load</span>-->
                 <span class="button" onclick="resetCanvas();">reDraw</span>
             </div>
         </div>
@@ -48,18 +47,11 @@
 
         </div>
         <div class="col-md-12 color-white">
-            <article class="markdown-body entry-content p-5" itemprop="text"><h1>A Star Algorithm</h1>
-                <p>A* (pronounced "A star") is a computer algorithm that is widely used in pathfinding and graph traversal, which is the process of finding a path between multiple points, called "nodes". It enjoys widespread use due to its performance and accuracy. <a href="https://en.wikipedia.org/wiki/A*_search_algorithm" rel="nofollow">( Read More ... )</a></p>
-                <h2>Getting Started</h2>
-                <p>We tried to implement this routing algorithm through javascript in this project.</p>
-                <p>In this project we try to implement routing in any desired directional graph, and along with finding the path, we will show how to select the path for the training of the algorithm.</p>
+            <!--<article class="markdown-body entry-content p-5" itemprop="text"><h1>A Star Algorithm</h1>-->
                 <h2>Example</h2>
                 <p class="canvasType" style="margin: 35px!important;">
-                    <span class="button" style="height: 80px;" onclick="loadData(1);">Example 1</span>
-                    <span class="button" style="height: 80px;" onclick="loadData(2);">Example 2</span>
-                    <span class="button" style="height: 80px;" onclick="loadData(3);">Example 3</span>
-                    <span class="button" style="height: 80px;" onclick="loadData(4);">Example 4</span>
-                    <span class="button" style="height: 80px;" onclick="loadData(5);">Example 5</span>
+                    <span class="button" style="height: 80px;" onclick="loadData(1);">Example all source</span>
+                    <span class="button" style="height: 80px;" onclick="loadData(2);">Example single source</span>
                 </p>
             </article>
         </div>
